@@ -105,9 +105,7 @@ class CompletedServiceDetails extends StatelessWidget {
                   ),
                   child: SingleChildScrollView(
                     child: Text(
-                      service['feedback']=='null'
-                          ? service['feedback']
-                          : "No feedback provided.",
+                      service['feedback'],
                       style: TextStyle(
                         fontSize: 16,
                         color: Colors.black,

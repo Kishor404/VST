@@ -52,7 +52,6 @@ class _ServiceDetailsState extends State<ServiceDetails> {
                 _buildDetail(AppLocalizations.of(context).translate('service_details_staff_name'), widget.serviceData["staff_name"]?.toString() ?? "None"),
                 _buildDetail(AppLocalizations.of(context).translate('service_details_staff_id'), widget.serviceData["staff"]?.toString() ?? "None"),
                 _buildDetail(AppLocalizations.of(context).translate('service_details_complaint'), widget.serviceData['complaint']?.toString() ?? "None"),
-                _buildDetail(AppLocalizations.of(context).translate('service_details_description'), widget.serviceData['description']?.toString() ?? "None"),
                 _buildDetail(AppLocalizations.of(context).translate('service_details_date'), widget.serviceData['available_date']?.toString() ?? "None"),
                 _buildDetail(AppLocalizations.of(context).translate('service_details_status'), _getStatusLabel(widget.serviceData['status']?.toString() ?? "None")),
                 SizedBox(height: 16.h), // Use ScreenUtil for spacing

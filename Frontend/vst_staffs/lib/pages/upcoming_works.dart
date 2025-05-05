@@ -163,6 +163,7 @@ class CompletedCard extends StatelessWidget {
         );
       },
       child: Card(
+        color: Colors.white,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
           side: const BorderSide(color: Color.fromRGBO(55, 99, 174, 1), width: 2),
