@@ -149,7 +149,7 @@ const Essentials = () => {
         <section className="es-body">
             <div className="es-top-cont">
                 <div className="es-top-card-cont">
-                    <Link className="es-top-card" to='/service'>
+                    <Link className="es-top-card" to='/head/service'>
                         <div className="es-top-card-left">
                             <p className="es-top-card-value">{pendingCount}</p>
                             <p className="es-top-card-title">Action Required</p>

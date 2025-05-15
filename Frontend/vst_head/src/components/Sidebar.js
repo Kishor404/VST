@@ -17,50 +17,50 @@ return (
                 <img src={Logo} alt="VST Maarketing" className="sidebar-img"/>
             </div>
             <div className="sidebar-button-cont">
-                <Link to="/createcard" className="sidebar-button">
+                <Link to="/head/createcard" className="sidebar-button">
                     Create Card
                     <FaPlus className="sidebar-button-icon" size={12}/>
                 </Link>
             </div>
             <div className="sidebar-list">
                 <div className="sidebar-item">
-                    <Link to="/service" className="sidebar-link">
+                    <Link to="/head/service" className="sidebar-link">
                         <MdRoomService className="sidebar-item-icon" size={20}/>
                         Services
                     </Link>
                 </div>
                 <div className="sidebar-item">
-                    <Link to="/essentials" className="sidebar-link">
+                    <Link to="/head/essentials" className="sidebar-link">
                         <MdHotelClass className="sidebar-item-icon" size={20}/>
                         Essentials
                     </Link>
                 </div>
                 <div className="sidebar-item">
-                    <Link to="/customer" className="sidebar-link">
+                    <Link to="/head/customer" className="sidebar-link">
                         <FaUsers className="sidebar-item-icon" size={20}/>
                         Customers
                     </Link>
                 </div>
                 <div className="sidebar-item">
-                    <Link to="/staff" className="sidebar-link">
+                    <Link to="/head/staff" className="sidebar-link">
                         <FaIdBadge className="sidebar-item-icon" size={20}/>
                         Staffs
                     </Link>
                 </div>
                 <div className="sidebar-item">
-                    <Link to="/editreq" className="sidebar-link">
+                    <Link to="/head/editreq" className="sidebar-link">
                         <FaEdit className="sidebar-item-icon" size={20}/>
                         Edit Requests
                     </Link>
                 </div>
                 <div className="sidebar-item">
-                    <Link to="/unavareq" className="sidebar-link">
+                    <Link to="/head/unavareq" className="sidebar-link">
                         <FaInfo className="sidebar-item-icon" size={20}/>
                         Unavailable Requests
                     </Link>
                 </div>
                 <div className="sidebar-item">
-                    <Link to="/showcard" className="sidebar-link">
+                    <Link to="/head/showcard" className="sidebar-link">
                         <FaAddressCard className="sidebar-item-icon" size={20}/>
                         Customer Card
                     </Link>

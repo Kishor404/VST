@@ -14,7 +14,7 @@ import Essentials from "./pages/essentials";
 
 const Layout = ({ children }) => {
   const location = useLocation();
-  const showSidebar = location.pathname !== "/"; // Hide sidebar on Login page
+  const showSidebar = location.pathname !== "/head"; // Hide sidebar on Login page
 
   return (
     <div className="app-container">
@@ -29,15 +29,15 @@ const App = () => {
     <Router>
       <Layout>
         <Routes>
-          <Route path="/" element={<Login />} />
-          <Route path="/customer" element={<Customer />} />
-          <Route path="/staff" element={<Staff />} />
-          <Route path="/editreq" element={<EditReq />} />
-          <Route path="/unavareq" element={<UnavaReq />} />
-          <Route path="/createcard" element={<CreateCard />} />
-          <Route path="/showcard" element={<ShowCard/>} />
-          <Route path="/service" element={<Service/>} />
-          <Route path="/essentials" element={<Essentials/>} />
+          <Route path="/head" element={<Login />} />
+          <Route path="/head/customer" element={<Customer />} />
+          <Route path="/head/staff" element={<Staff />} />
+          <Route path="/head/editreq" element={<EditReq />} />
+          <Route path="/head/unavareq" element={<UnavaReq />} />
+          <Route path="/head/createcard" element={<CreateCard />} />
+          <Route path="/head/showcard" element={<ShowCard/>} />
+          <Route path="/head/service" element={<Service/>} />
+          <Route path="/head/essentials" element={<Essentials/>} />
         </Routes>
       </Layout>
     </Router>
