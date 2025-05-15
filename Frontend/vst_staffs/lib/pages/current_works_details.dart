@@ -29,6 +29,7 @@ class _CurrentWorkState extends State<CurrentWork> {
     await _loadTokens();
     await fetchUpcomingWorks();
     await _loadSavedServiceEntry();
+    print(serviceEntry);
   }
 
   Future<void> _loadTokens() async {
@@ -92,16 +93,9 @@ class _CurrentWorkState extends State<CurrentWork> {
     final prefs = await SharedPreferences.getInstance();
     String? savedEntry = prefs.getString('serviceEntry');
     if (savedEntry != null) {
-      final decoded = json.decode(savedEntry);
-      if(decoded["service"]!=services[0]['id']){
-        serviceEntry = null;
-        await prefs.remove('serviceEntry');
-      }else{
-        setState(() {
-          serviceEntry = decoded;
-        });
-      }
-      
+      setState(() {
+        serviceEntry = json.decode(savedEntry);
+      });
     }
   }
 
