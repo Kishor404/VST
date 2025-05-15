@@ -16,7 +16,7 @@ Content-Type: application/json
 POST http://157.173.220.208/log/login/
 Content-Type: application/json
 
-{"phone":"3535353535","password":"123"}
+{"phone":"9443389412","password":"123"}
 
 # ====== DEMO 1 ========
 
@@ -60,7 +60,7 @@ Content-Type: application/json
 POST http://157.173.220.208/log/signup/
 Content-Type: application/json
 
-{"name":"Vijay","phone":"1234599999","password":"123","region":"chennai","role":"head"}
+{"name":"Vijay","phone":"6667078889","password":"123","region":"chennai","role":"customer"}
 
 ### ========== CARD DETAILS API ==========
 
