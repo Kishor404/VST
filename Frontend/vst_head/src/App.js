@@ -14,7 +14,7 @@ import Essentials from "./pages/essentials";
 
 const Layout = ({ children }) => {
   const location = useLocation();
-  const showSidebar = location.pathname !== "/head"; // Hide sidebar on Login page
+  const showSidebar = location.pathname !== "/head/"; // Hide sidebar on Login page
 
   return (
     <div className="app-container">
