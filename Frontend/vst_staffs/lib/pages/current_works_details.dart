@@ -29,7 +29,6 @@ class _CurrentWorkState extends State<CurrentWork> {
     await _loadTokens();
     await fetchUpcomingWorks();
     await _loadSavedServiceEntry();
-    print(serviceEntry);
   }
 
   Future<void> _loadTokens() async {
@@ -90,14 +89,30 @@ class _CurrentWorkState extends State<CurrentWork> {
   }
 
   Future<void> _loadSavedServiceEntry() async {
-    final prefs = await SharedPreferences.getInstance();
-    String? savedEntry = prefs.getString('serviceEntry');
-    if (savedEntry != null) {
+  final prefs = await SharedPreferences.getInstance();
+  final savedEntry = prefs.getString('serviceEntry');
+  if (savedEntry != null) {
+    final decoded = json.decode(savedEntry);
+    // Check if this serviceEntry belongs to the current service
+    
+    if (decoded['service'].toString() == services.last['id'].toString()) {
       setState(() {
-        serviceEntry = json.decode(savedEntry);
+        serviceEntry = decoded;
+      });
+    } else {
+      // Clear old entry if it's for another service
+      await prefs.remove('serviceEntry');
+      setState(() {
+        serviceEntry = null;
       });
     }
+  } else {
+    setState(() {
+      serviceEntry = null;
+    });
   }
+}
+
 
 Future<void> _showServiceEntryDialog(BuildContext context, Map<String, dynamic> service) async {
   final TextEditingController nextServiceController = TextEditingController();

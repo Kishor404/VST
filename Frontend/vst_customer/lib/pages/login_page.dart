@@ -297,7 +297,7 @@ class LoginPageState extends State<LoginPage> {
         }
       } catch (e) {
         // Handle any exceptions (e.g., network issues)
-        _showError('An error occurred. Please try again later.');
+        _showError('Login failed..!\nPlease check your credentials or try again later...');
       }
     } else {
       // Handle case where fields are empty

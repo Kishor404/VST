@@ -166,6 +166,8 @@ class _CardDetailsPageState extends State<CardDetailsPage> {
 
 
   void _signService(int serviceId, double rating, String feedback, BuildContext context) async {
+    print(feedback);
+    print(rating);
     final url = '${Data.baseUrl}/api/signbycustomer/$serviceId/';
     final headers = {
       'Content-Type': 'application/json',

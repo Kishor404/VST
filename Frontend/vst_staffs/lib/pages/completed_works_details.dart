@@ -105,7 +105,7 @@ class CompletedServiceDetails extends StatelessWidget {
                   ),
                   child: SingleChildScrollView(
                     child: Text(
-                      service['feedback'],
+                      service['feedback'].toString(),
                       style: TextStyle(
                         fontSize: 16,
                         color: Colors.black,
