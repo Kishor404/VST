@@ -15,6 +15,10 @@ const Service = () => {
     const [serviceList, setServiceList] = useState([]);
     const [editService, setEditService] = useState(true);
 
+    const [createUser, setCreateUser] = useState({});
+    const [createCard, setCreateCard] = useState([]);
+    const [AllCard, setAllCard] = useState([]);
+
     const [fetchService, setfetchService] = useState(false);
     const [fetchServiceId, setfetchServiceId] = useState("");
     const [fetchServiceStaffId, setfetchServiceStaffId] = useState("");
@@ -26,6 +30,7 @@ const Service = () => {
     const [fetchServiceAvailableTo, setfetchServiceAvailableTo] = useState("");
 
     const [createServiceCustomerId, setcreateServiceCustomerId] = useState("");
+    const [createServiceCustomerIdPhone, setcreateServiceCustomerIdPhone] = useState("");
     const [createServiceStaffId, setcreateServiceStaffId] = useState("");
     const [createServiceCardId, setcreateServiceCardId] = useState("");
     const [createServiceAvaDate, setcreateServiceAvaDate] = useState("");
@@ -34,6 +39,8 @@ const Service = () => {
 
     const [boxData, setBoxData] = useState({"upcoming": 0, "pending": 0, "completed": 0, "total": 0});
     const refreshToken = Cookies.get('refresh_token');
+
+    
 
     // ========== REFRESH TOKEN ==========
     const refresh_token = async () => {
@@ -107,6 +114,7 @@ const Service = () => {
             "description": createServiceComplaintDescription,
             "status": "BD",
         }
+        console.log(reqBody);
         try {
             const response = await axios.post("http://157.173.220.208/services/", reqBody, { headers: { Authorization: `Bearer ${accessToken}` } });
             console.log(response.data);
@@ -115,6 +123,36 @@ const Service = () => {
         } catch (error) {
             console.error("Error fetching customers:", error);
             alert("Error Creating Service, Please check the values and try again.");
+        }
+    };
+
+    // ========== GET CUSTOMER BY PHONE ==========
+
+    const getUserByPhone = async (phone) => {
+        const accessToken = await refresh_token();
+        if (!accessToken) return;
+        try {
+            const response = await axios.get("http://157.173.220.208/utils/getuserbyphone/"+phone, { headers: { Authorization: `Bearer ${accessToken}` } });
+            setCreateUser(response.data);
+            setcreateServiceCustomerId(response.data.id);
+            const matchedCards = AllCard.filter(card => card.customer_code.toString() === response.data.id.toString());
+            setCreateCard(matchedCards.length > 0 ? matchedCards : []);
+        } catch (error) {
+            setCreateUser({});
+            console.error("Error fetching customers:", error);
+        }
+    };
+
+    // ========== GET ALL CARD ============
+
+    const getAllCard = async () => {
+        const accessToken = await refresh_token();
+        if (!accessToken) return;
+        try {
+            const response = await axios.get("http://157.173.220.208/api/headcardlist/", { headers: { Authorization: `Bearer ${accessToken}` } });
+            setAllCard(response.data);
+        } catch (error) {
+            console.error("Error fetching customers:", error);
         }
     };
 
@@ -196,7 +234,7 @@ const Service = () => {
 
     useEffect(() => {
         getAllServiceList();
-        
+        getAllCard();
     }, []);
 
     return(
@@ -334,16 +372,28 @@ const Service = () => {
                                     <form className='service-bottom-right-bottom-create-cont' onSubmit={(e)=>{e.preventDefault();handleCreateService();}}>
                                         <div className='service-bottom-right-bottom-create-info-box'>
                                             <div className='service-bottom-right-bottom-create-info-cont'>
-                                                <p className='service-bottom-right-bottom-create-info-title'>Customer ID</p>
-                                                <input type="text" placeholder='Enter Customer ID' className='service-bottom-right-bottom-create-info-input' required value={createServiceCustomerId} onChange={(e)=>{setcreateServiceCustomerId(e.target.value)}}/>
+                                                <p className='service-bottom-right-bottom-create-info-title'>Customer : {createUser.name?createUser.name + " ( " + createUser.id + " )" : "Not Found"}</p>
+                                                <input type="text" placeholder='Enter Customer Phone' className='service-bottom-right-bottom-create-info-input' required value={createServiceCustomerIdPhone} onChange={(e)=>{setcreateServiceCustomerIdPhone(e.target.value); getUserByPhone(e.target.value)}}/>
                                             </div>
                                             <div className='service-bottom-right-bottom-create-info-cont'>
                                                 <p className='service-bottom-right-bottom-create-info-title'>Staff ID</p>
                                                 <input type="text" placeholder='Enter Staff ID' className='service-bottom-right-bottom-create-info-input' required value={createServiceStaffId} onChange={(e)=>{setcreateServiceStaffId(e.target.value)}}/>
                                             </div>
-                                            <div className='service-bottom-right-bottom-create-info-cont'>
-                                                <p className='service-bottom-right-bottom-create-info-title'>Card ID</p>
-                                                <input type="text" placeholder='Enter Card ID' className='service-bottom-right-bottom-create-info-input' required value={createServiceCardId} onChange={(e)=>{setcreateServiceCardId(e.target.value)}}/>
+                                            <div className='service-bottom-right-bottom-create-info-cont-drop'>
+                                                <p className='service-bottom-right-bottom-create-info-title'>Card ID : </p>
+                                                <select
+                                                    className='service-bottom-right-bottom-create-info-input'
+                                                    required
+                                                    value={createServiceCardId}
+                                                    onChange={(e) => setcreateServiceCardId(e.target.value)}
+                                                >
+                                                    <option value="">-- Select Card --</option>
+                                                    {createCard.map((card) => (
+                                                    <option key={card.id} value={card.id}>
+                                                        {card.id + " - " + card.model}
+                                                    </option>
+                                                    ))}
+                                                </select>
                                             </div>
                                             <div className='service-bottom-right-bottom-create-info-cont'>
                                                 <p className='service-bottom-right-bottom-create-info-title'>Appointed Date</p>
