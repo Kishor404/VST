@@ -17,8 +17,6 @@ class CardDetailsPage extends StatefulWidget {
 }
 
 class _CardDetailsPageState extends State<CardDetailsPage> {
-  double _rating = 1.0;
-  TextEditingController _feedbackController = TextEditingController();
   String _refreshToken = '';
   String _accessToken = '';
   List<dynamic> products = [];
