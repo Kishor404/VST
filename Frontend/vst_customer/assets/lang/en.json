@@ -57,12 +57,15 @@
     "card_service_parts_replaced":"Parts Replaced : ",
     "card_service_ICR_no":"ICR No : ",
     "card_service_amount_charged":"Amount Charged : ",
-    "card_service_customer_signed":"Customer Signature : Verified",
-    "card_service_sign":"Sign",
+    "card_service_customer_signed":"Verified by Customer",
+    "card_service_customer_unsigned":"Verification Pending",
+    "card_service_sign_by":"Signature By : ",
+    "card_service_sign_at":"Signature At : ",
+    "card_service_sign":"Verify Service",
     "card_service_close":"Close",
 
-    "card_confrim_sign":"Confirm Signature",
-    "card_confrim_sign_text":"Are you sure you want to sign this service?",
+    "card_confrim_sign":"Service Verification",
+    "card_confrim_sign_text":"Read the details carefully before verifying. By verifying, you confirm that the service has been completed to your satisfaction.",
     "card_rating":"Please provide your rating:",
     "card_feedback":"Feedback",
     "card_cancel":"Cancel",
@@ -112,6 +115,9 @@
     "service_book_enter_complaint":"Enter your complaint",
     "service_book_brief_desc":"Brief Description",
     "service_book_but":"Book Service",
+    "service_book_verification_method":"Verification Method",
+    "service_book_verification_otp":"OTP",
+    "service_book_verification_signature":"Signature",
 
 
 
@@ -123,6 +129,7 @@
     "service_details_complaint":"Complaint : ",
     "service_details_description":"Description : ",
     "service_details_date":"Appointed Date : ",
+    "service_details_verification_method":"Verification Method : ",
     "service_details_status":"Status : ",
     "service_details_customer_details":"Customer Details : ",
     "service_details_customer_city":"City : ",

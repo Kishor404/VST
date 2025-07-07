@@ -146,6 +146,10 @@ class _CardDetailsPageState extends State<CardDetailsPage> {
               TextButton(
                 onPressed: () => Navigator.pop(dialogContext),
                 child: Text(AppLocalizations.of(context).translate('card_cancel')),
+                style: TextButton.styleFrom(
+                  foregroundColor: Colors.red, // Text color for cancel button
+                  padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+                ),
               ),
               ElevatedButton(
                 onPressed: () {
@@ -153,7 +157,15 @@ class _CardDetailsPageState extends State<CardDetailsPage> {
                   _signService(serviceId, rating, feedbackController.text, parentContext); // use parentContext
                 },
                 child: Text(AppLocalizations.of(context).translate('card_confirm')),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Color.fromARGB(255, 55, 99, 174), // Button color
+                  foregroundColor: Colors.white, // Text color for confirm button
+                  padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8.r), // Rounded corners
+                  ),
               ),
+              )
             ],
           );
         },
@@ -304,6 +316,7 @@ class _CardDetailsPageState extends State<CardDetailsPage> {
                         ),
                       ),
                       onPressed: () {
+
                         showDialog(
                           context: context,
                           builder: (context) {
@@ -334,11 +347,41 @@ class _CardDetailsPageState extends State<CardDetailsPage> {
                                       SizedBox(height: 12.h),
                                       Divider(),
 
-                                      // Details Section
-                                      Text(
-                                        AppLocalizations.of(context).translate('card_service_details'),
-                                        style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w500),
+                                      Container(
+                                        width: double.infinity,
+                                        padding: const EdgeInsets.all(12),
+                                        margin: const EdgeInsets.only(bottom: 12),
+                                        decoration: BoxDecoration(
+                                          color: (service['customer_signature'] != null && service['customer_signature']['sign'] != 0) ? Colors.green[50] : Colors.red[50],
+                                          borderRadius: BorderRadius.circular(8),
+                                          border: Border.all(
+                                            color: (service['customer_signature'] != null && service['customer_signature']['sign'] != 0) ? const Color.fromARGB(255, 49, 114, 51) : const Color.fromARGB(255, 165, 34, 25),
+                                          ),
+                                        ),
+                                        child: Row(
+                                          children: [
+                                            Icon(
+                                              (service['customer_signature'] != null && service['customer_signature']['sign'] != 0) ? Icons.verified : Icons.error_outline,
+                                              color: (service['customer_signature'] != null && service['customer_signature']['sign'] != 0) ? const Color.fromARGB(255, 52, 121, 54) : const Color.fromARGB(255, 160, 32, 23),
+                                            ),
+                                            const SizedBox(width: 8),
+                                            Expanded(
+                                              child: Text(
+                                                (service['customer_signature'] != null && service['customer_signature']['sign'] != 0)
+                                                    ? AppLocalizations.of(context).translate('card_service_customer_signed')
+                                                    : AppLocalizations.of(context).translate('card_service_customer_unsigned'),
+                                                style: TextStyle(
+                                                  color: (service['customer_signature'] != null && service['customer_signature']['sign'] != 0) ? Colors.green : Colors.red,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
                                       ),
+
+                                      // Details Section
+                                      
                                       SizedBox(height: 10.h),
                                       _buildServiceInfoRow(context, 'card_service_date', service['date']),
                                       _buildServiceInfoRow(context, 'card_service_visit_type', service['visit_type']),
@@ -347,22 +390,33 @@ class _CardDetailsPageState extends State<CardDetailsPage> {
                                       _buildServiceInfoRow(context, 'card_service_parts_replaced', service['parts_replaced']),
                                       _buildServiceInfoRow(context, 'card_service_ICR_no', service['icr_number']),
                                       _buildServiceInfoRow(context, 'card_service_amount_charged', service['amount_charged']),
+                                      _buildServiceInfoRow(context, 'card_service_sign_by', service['Signature_By']),
+                                      _buildServiceInfoRow(context, 'card_service_sign_at', service['Signature_At'].split("T")[0]),
                                       SizedBox(height: 16.h),
 
                                       // Signature Info
-                                      if (service['customer_signature'] != null && service['customer_signature']['sign'] != 0)
-                                        Row(
-                                          children: [
-                                            Icon(Icons.check_circle, color: Colors.green),
-                                            SizedBox(width: 8.w),
-                                            Text(
-                                              AppLocalizations.of(context).translate('card_service_customer_signed'),
-                                              style: TextStyle(color: Colors.green, fontWeight: FontWeight.w600),
-                                            ),
-                                          ],
+                                      
+                                      if (service['Signature_Image'] != null && service['Signature_Image'].toString().isNotEmpty)
+                                        ClipRRect(
+                                          borderRadius: BorderRadius.circular(8.r),
+                                          child: Image.network(
+                                            service['Signature_Image'],
+                                            height: 150.h,
+                                            width: double.infinity,
+                                            fit: BoxFit.contain,
+                                            errorBuilder: (context, error, stackTrace) {
+                                              return Text(
+                                                AppLocalizations.of(context).translate('card_signature_load_failed'),
+                                                style: TextStyle(color: Colors.red),
+                                              );
+                                            },
+                                          ),
                                         ),
 
                                       SizedBox(height: 20.h),
+
+
+                                      
 
                                       // Action Buttons
                                       Align(
@@ -377,12 +431,28 @@ class _CardDetailsPageState extends State<CardDetailsPage> {
                                                 children: [
                                                   ElevatedButton.icon(
                                                     onPressed: () => _showSignConfirmationDialog(context, context, service['id']),
-                                                    icon: Icon(Icons.edit),
+                                                    icon: Icon(Icons.check_circle, color: Colors.white),
                                                     label: Text(AppLocalizations.of(context).translate('card_service_sign')),
+                                                    style: ElevatedButton.styleFrom(
+                                                      backgroundColor: Color.fromARGB(255, 55, 99, 174),
+                                                      foregroundColor: Colors.white,
+                                                      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+                                                      shape: RoundedRectangleBorder(
+                                                        borderRadius: BorderRadius.circular(8.r),
+                                                      ),
+                                                    ),
                                                   ),
-                                                  TextButton(
+                                                  ElevatedButton(
                                                     onPressed: () => Navigator.pop(context),
                                                     child: Text(AppLocalizations.of(context).translate('card_service_close')),
+                                                    style: ElevatedButton.styleFrom(
+                                                      backgroundColor: Color.fromARGB(255, 214, 0, 0),
+                                                      foregroundColor: Colors.white,
+                                                      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+                                                      shape: RoundedRectangleBorder(
+                                                        borderRadius: BorderRadius.circular(8.r),
+                                                      ),
+                                                    )
                                                   ),
                                                 ],
                                               ),

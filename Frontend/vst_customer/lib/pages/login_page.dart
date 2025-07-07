@@ -5,6 +5,8 @@ import 'package:dio/dio.dart';
 import 'data.dart';
 import '../app_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -178,9 +180,8 @@ class LoginPageState extends State<LoginPage> {
     final district = _districtController.text;
     final postalCode = _postalCodeController.text;
     final region = _selectedRegion;
-    final prefs = await SharedPreferences.getInstance();
-    final fcm=prefs.getString('FCM_Token');
-    print(fcm);
+    final fcm=await FirebaseMessaging.instance.getToken();
+    print("📌 Retrieved FCM_Token from prefs: $fcm");
 
     if (name.isNotEmpty &&
         phone.isNotEmpty &&
@@ -224,6 +225,7 @@ class LoginPageState extends State<LoginPage> {
       } catch (e) {
         _showError('An error occurred. Please try again later.');
         print('==================================> $e');
+        print(requestBody);
       }
     } else {
       _showError('Please fill in all required fields.');
@@ -233,8 +235,8 @@ class LoginPageState extends State<LoginPage> {
   Future<void> _login() async {
      final phone = _phoneController.text;
     final password = _passwordController.text;
-    final prefs = await SharedPreferences.getInstance();
-    final fcm=prefs.getString('FCM_Token');
+    final fcm=await FirebaseMessaging.instance.getToken();
+    print("📌 Retrieved FCM_Token from prefs: $fcm");
 
     if (phone.isNotEmpty && password.isNotEmpty) {
       // Handle login logic with API call

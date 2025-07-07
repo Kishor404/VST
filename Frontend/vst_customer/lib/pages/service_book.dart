@@ -16,6 +16,7 @@ class ServiceBook extends StatefulWidget {
 }
 
 class ServiceBookState extends State<ServiceBook> {
+  String _verificationMethod = 'otp'; // Default verification method
   String _refreshToken = '';
   String _accessToken = '';
   DateTime? fromDate;
@@ -267,6 +268,7 @@ class ServiceBookState extends State<ServiceBook> {
       "complaint": complaintText,
       "status": "BD",
       "card": cardId,
+      "OTP_Verification": _verificationMethod == 'otp',
     };
 
     try {
@@ -447,13 +449,48 @@ class ServiceBookState extends State<ServiceBook> {
                   TextField(
                     controller: complaintDetailsController,
                     decoration: InputDecoration(
-                      labelText: AppLocalizations.of(context).translate('service_book_brief_des'),
+                      labelText: AppLocalizations.of(context).translate('service_book_brief_desc'),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10.r),
                       ),
                     ),
                   ),
                 ],
+                SizedBox(height: 30.h),
+                
+                SizedBox(height: 20.h),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    AppLocalizations.of(context).translate('service_book_verification_method'),
+                    style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w600),
+                  ),
+                ),
+                Column(
+                  children: [
+                    RadioListTile<String>(
+                      title: Text(AppLocalizations.of(context).translate('service_book_verification_otp')),
+                      value: 'otp',
+                      groupValue: _verificationMethod,
+                      onChanged: (value) {
+                        setState(() {
+                          _verificationMethod = value!;
+                        });
+                      },
+                    ),
+                    RadioListTile<String>(
+                      title: Text(AppLocalizations.of(context).translate('service_book_verification_signature')),
+                      value: 'signature',
+                      groupValue: _verificationMethod,
+                      onChanged: (value) {
+                        setState(() {
+                          _verificationMethod = value!;
+                        });
+                      },
+                    ),
+                  ],
+                ),
+
                 SizedBox(height: 30.h),
                 SizedBox(
                   width: double.infinity,

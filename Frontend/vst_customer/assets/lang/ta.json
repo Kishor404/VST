@@ -28,7 +28,7 @@
     "home_setting": "அமைப்பு",
     "home_alert": "அறிவிப்பு",
     "home_profile": "சுயவிவரம்",
-    "home_product": "தயாரிப்பு",
+    "home_product": "விற்பனை",
     "home_help": "உதவி",
 
     "home_loading": "ஏற்றுகிறது...",
@@ -54,11 +54,14 @@
     "card_service_ICR_no": "ICR எண் : ",
     "card_service_amount_charged": "சேவைக்கான கட்டணம் : ",
     "card_service_customer_signed": "வாடிக்கையாளர் கையொப்பம் : உறுதிப்படுத்தப்பட்டது",
-    "card_service_sign": "கையொப்பம்",
+    "card_service_customer_unsigned": "உறுதிப்படுத்தல் நிலுவையில் உள்ளது",
+    "card_service_sign_by": "கையொப்பம் செய்தவர் : ",
+    "card_service_sign_at": "கையொப்பம் இடப்பட்டது : ",
+    "card_service_sign": "சேவையை உறுதிப்படுத்தவும்",
     "card_service_close": "மூடு",
 
-    "card_confrim_sign": "கையொப்பத்தை உறுதிப்படுத்தவும்",
-    "card_confrim_sign_text": "இந்த சேவைக்கு கையொப்பமிட விரும்புகிறீர்களா?",
+    "card_confrim_sign": "சேவை சரிபார்ப்பு",
+    "card_confrim_sign_text": "விரிவான விவரங்களை சரிபார்க்கவும். சேவையை உறுதிப்படுத்துவதன் மூலம், நீங்கள் சேவை உங்கள் திருப்திக்கு ஏற்ப முடிக்கப்பட்டதாக உறுதிப்படுத்துகிறீர்கள்.",
     "card_rating": "உங்கள் மதிப்பீட்டை வழங்கவும்:",
     "card_feedback": "பின்னூட்டம்",
     "card_cancel": "ரத்து செய்யவும்",
@@ -81,8 +84,8 @@
 
 
 
-    "product_title": "தயாரிப்பு",
-    "product_no_product": "தயாரிப்பு இல்லை",
+    "product_title": "விற்பனை",
+    "product_no_product": "விற்பனை இல்லை",
 
 
 
@@ -107,6 +110,9 @@
     "service_book_enter_complaint": "உங்கள் புகாரை உள்ளிடவும்",
     "service_book_brief_desc": "சுருக்கமான விளக்கம்",
     "service_book_but": "சேவையை பதிவு செய்யவும்",
+    "service_book_verification_method": "சரிபார்ப்பு முறை",
+    "service_book_verification_otp": "OTP",
+    "service_book_verification_signature": "கையொப்பம்",
 
 
     "service_details_title": "சேவை விவரங்கள்",
@@ -117,6 +123,7 @@
     "service_details_complaint": "புகார் : ",
     "service_details_description": "விளக்கம் : ",
     "service_details_date": "நியமிக்கப்பட்ட தேதி : ",
+    "service_details_verification_method": "சரிபார்ப்பு முறை : ",
     "service_details_status": "நிலை : ",
     "service_details_customer_details": "வாடிக்கையாளர் விவரங்கள் : ",
     "service_details_customer_city": "நகரம் : ",
@@ -167,7 +174,7 @@
 
     "nav_home": "முகப்பு",
     "nav_service": "சேவை",
-    "nav_products": "தயாரிப்பு",
+    "nav_products": "விற்பனை",
     "nav_card": "அட்டை",
     "nav_profile": "சுயவிவரம்",
 

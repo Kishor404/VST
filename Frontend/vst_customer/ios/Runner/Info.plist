@@ -52,5 +52,10 @@
 			<string>fetch</string>
 			<string>remote-notification</string>
 		</array>
+		<key>NSCameraUsageDescription</key>
+		<string>We need to access your camera for image uploads.</string>
+		<key>NSPhotoLibraryUsageDescription</key>
+		<string>We need to access your photo library for image uploads.</string>
+
 	</dict>
 </plist>
