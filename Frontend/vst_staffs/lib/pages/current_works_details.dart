@@ -165,6 +165,34 @@ class _CurrentWorkState extends State<CurrentWork> {
                       controller: nextServiceController,
                       decoration: const InputDecoration(labelText: "Next Service Date", border: OutlineInputBorder()),
                     ),
+                    const SizedBox(height: 8),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        TextButton(
+                          onPressed: () {
+                            final nextDate = DateTime.now().add(Duration(days: 30));
+                            nextServiceController.text = nextDate.toIso8601String().split('T')[0];
+                          },
+                          child: const Text("1 Month"),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            final nextDate = DateTime.now().add(Duration(days: 90));
+                            nextServiceController.text = nextDate.toIso8601String().split('T')[0];
+                          },
+                          child: const Text("3 Months"),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            final nextDate = DateTime.now().add(Duration(days: 180));
+                            nextServiceController.text = nextDate.toIso8601String().split('T')[0];
+                          },
+                          child: const Text("6 Months"),
+                        ),
+                      ],
+                    ),
+
                     const SizedBox(height: 12),
                     DropdownButtonFormField<String>(
                       value: visitType,
@@ -407,6 +435,34 @@ class _CurrentWorkState extends State<CurrentWork> {
                           border: OutlineInputBorder(),
                         ),
                       ),
+                      const SizedBox(height: 8),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          TextButton(
+                            onPressed: () {
+                              final nextDate = DateTime.now().add(Duration(days: 30));
+                              nextServiceController.text = nextDate.toIso8601String().split('T')[0];
+                            },
+                            child: const Text("1 Month"),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              final nextDate = DateTime.now().add(Duration(days: 90));
+                              nextServiceController.text = nextDate.toIso8601String().split('T')[0];
+                            },
+                            child: const Text("3 Months"),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              final nextDate = DateTime.now().add(Duration(days: 180));
+                              nextServiceController.text = nextDate.toIso8601String().split('T')[0];
+                            },
+                            child: const Text("6 Months"),
+                          ),
+                        ],
+                      ),
+
                       const SizedBox(height: 12),
                       DropdownButtonFormField<String>(
                         value: visitType,

@@ -88,7 +88,7 @@ class _CompletedWorksState extends State<CompletedWorks> {
         }),
       );
       setState(() {
-        services = response.data;
+        services = response.data.reversed.toList();
         isLoading = false;
       });
     } catch (e) {

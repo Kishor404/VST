@@ -16,7 +16,7 @@ class ServiceBook extends StatefulWidget {
 }
 
 class ServiceBookState extends State<ServiceBook> {
-  String _verificationMethod = 'otp'; // Default verification method
+  String _verificationMethod = 'signature'; // Default verification method
   String _refreshToken = '';
   String _accessToken = '';
   DateTime? fromDate;
@@ -473,11 +473,15 @@ class ServiceBookState extends State<ServiceBook> {
                       value: 'otp',
                       groupValue: _verificationMethod,
                       onChanged: (value) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text("OTP Generation was currently unvailable. Please use Signature for verification.")),
+                        );
                         setState(() {
-                          _verificationMethod = value!;
+                          _verificationMethod = 'signature'; // Switch back to signature
                         });
                       },
                     ),
+
                     RadioListTile<String>(
                       title: Text(AppLocalizations.of(context).translate('service_book_verification_signature')),
                       value: 'signature',

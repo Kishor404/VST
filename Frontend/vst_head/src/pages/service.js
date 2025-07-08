@@ -26,6 +26,8 @@ const Service = () => {
     const [fetchServiceAvaDate, setfetchServiceAvaDate] = useState("");
     const [fetchServiceComplaint, setfetchServiceComplaint] = useState("");
     const [fetchServiceStatus, setfetchServiceStatus] = useState("");
+    const [fetchServiceRating, setfetchServiceRating] = useState("");
+    const [fetchServiceFeedback, setfetchServiceFeedback] = useState("");
     const [fetchServiceAvailableFrom, setfetchServiceAvailableFrom] = useState("");
     const [fetchServiceAvailableTo, setfetchServiceAvailableTo] = useState("");
 
@@ -68,6 +70,8 @@ const Service = () => {
             setfetchServiceAvaDate(response.data.available_date);
             setfetchServiceComplaint(response.data.complaint);
             setfetchServiceStatus(response.data.status);
+            setfetchServiceRating(response.data.rating);
+            setfetchServiceFeedback(response.data.feedback);
             setfetchServiceAvailableFrom(response.data.available.from);
             setfetchServiceAvailableTo(response.data.available.to);
 
@@ -293,7 +297,7 @@ const Service = () => {
                                             <td>{service.customer_data.name}</td>
                                             <td>{service.staff_name}</td>
                                             <td>{service.complaint}</td>
-                                            <td>{service.status}</td>
+                                            <td>{service.status=="SD"?service.rating+"/5":service.status}</td>
                                         </tr>
                                     ))}
                                 </tbody>
@@ -355,6 +359,22 @@ const Service = () => {
                                                 <p className='service-bottom-right-bottom-edit-info-title'>Status</p>
                                                 <input type="text" placeholder='Enter Status' className='service-bottom-right-bottom-edit-info-input' value={fetchServiceStatus} onChange={(e)=>{setfetchServiceStatus(e.target.value)}}/>
                                             </div>
+                                            {
+                                                fetchServiceStatus === "SD" ?
+                                                (
+                                                        <div className='service-bottom-right-bottom-edit-info-cont'>
+                                                            <p className='service-bottom-right-bottom-edit-info-title'>Rating : {fetchServiceRating}/5</p>
+                                                        </div>
+                                                ):<div></div>
+                                            }
+                                            {
+                                                fetchServiceStatus === "SD" ?
+                                                (
+                                                        <div className='service-bottom-right-bottom-edit-info-cont'>
+                                                            <p className='service-bottom-right-bottom-edit-info-title'>Feedback : {fetchServiceFeedback}</p>
+                                                        </div>
+                                                ):<div></div>
+                                            }
                                         </div>
                                         ):
                                         (
