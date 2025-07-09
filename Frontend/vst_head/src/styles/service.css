@@ -80,14 +80,41 @@
     width: 55%;
     height: 100%;
 }
-
+.service-bottom-left-top{
+    width: calc(100% - 40px);
+    height: calc(15% - 40px);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: white;
+    margin-bottom: 5%;
+    border-radius: 16px;
+    padding: 20px;
+}
+.service-bottom-left-top input{
+    width: 70%;
+    height: 100%;
+    border-radius: 10px;
+    border: none;
+    padding-left: 15px;
+    font-size: 12pt;
+    background-color: #e2e2e2;
+}
+.service-bottom-left-top select{
+    width: 25%;
+    height: 100%;
+    border-radius: 10px;
+    border: none;
+    padding-left: 15px;
+    font-size: 12pt;
+}
 
 .service-bottom-table-cont{
     display: flex;
     justify-content: start;
     align-items: start;
     width: 100%;
-    height: 100%;
+    height: 78%;
     background-color: #ffffff;
     overflow-y: scroll;
     border-radius: 20px;

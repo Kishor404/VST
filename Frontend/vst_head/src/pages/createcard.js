@@ -7,6 +7,9 @@ import React, { useState } from 'react';
 const CreateCard=()=>{
 
     const refreshToken = Cookies.get('refresh_token');
+    const [createUser, setCreateUser] = useState({});
+    const [createServiceCustomerId, setcreateServiceCustomerId] = useState("");
+    const [customerPhone, setCustomerPhone] = useState("");
     const [model, setModel] = useState("");
     const [cid, setCid] = useState("");
     const [doi, setDoi] = useState("");
@@ -32,7 +35,7 @@ const CreateCard=()=>{
 
     const post_card = async (accessToken) => {
         
-        if(model.trim() === "" || cid.trim() === "" || doi.trim() === ""){
+        if(model.trim() === "" || doi.trim() === ""){
             window.alert("Please Fill Required fields !");
             return;
         }
@@ -74,6 +77,20 @@ const CreateCard=()=>{
         if (accessToken) await post_card(accessToken);
     };
 
+    const getUserByPhone = async (phone) => {
+        const accessToken = await refresh_token();
+        if (!accessToken && phone.length()!==10) return;
+        try {
+            const response = await axios.get(`http://157.173.220.208/utils/getuserbyphone/${phone}`, { headers: { Authorization: `Bearer ${accessToken}` } });
+            setCreateUser(response.data);
+            setCid(response.data.id);
+            setcreateServiceCustomerId(response.data.id);
+        } catch (error) {
+            setCreateUser({});
+            console.error("Error fetching customer by phone:", error);
+        }
+    };
+
     return(
         <div className="createcard-cont">
             <div className='createcard-l'>
@@ -85,8 +102,8 @@ const CreateCard=()=>{
                         <input type="text" placeholder="Model Name" className="createcard-card-input" onChange={(e)=>setModel(e.target.value)}/>
                     </div>
                     <div className='createcard-input-cont'>
-                        <p>Customer ID</p>
-                        <input type="text" placeholder="Customer ID" className="createcard-card-input" onChange={(e)=>setCid(e.target.value)}/>
+                        <p>Customer : {createUser.name?createUser.name + " ( " + createUser.id + " )" : "Not Found"}</p>
+                        <input type="text" placeholder="Customer Phone" className="createcard-card-input" onChange={(e)=>{getUserByPhone(e.target.value)}}/>
                     </div>
                     <div className='createcard-input-cont'>
                         <p>Date Of Installation</p>

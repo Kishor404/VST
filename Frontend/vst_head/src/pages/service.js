@@ -9,10 +9,12 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 
-
 const Service = () => {
-
     const [serviceList, setServiceList] = useState([]);
+    const [filteredList, setFilteredList] = useState([]);
+    const [searchType, setSearchType] = useState("id");
+    const [searchQuery, setSearchQuery] = useState("");
+
     const [editService, setEditService] = useState(true);
 
     const [createUser, setCreateUser] = useState({});
@@ -39,15 +41,15 @@ const Service = () => {
     const [createServiceComplaint, setcreateServiceComplaint] = useState("");
     const [createServiceComplaintDescription, setcreateServiceComplaintDescription] = useState("");
 
-    const [boxData, setBoxData] = useState({"upcoming": 0, "pending": 0, "completed": 0, "total": 0});
+    const [boxData, setBoxData] = useState({ "upcoming": 0, "pending": 0, "completed": 0, "total": 0 });
     const refreshToken = Cookies.get('refresh_token');
 
-    
-
-    // ========== REFRESH TOKEN ==========
     const refresh_token = async () => {
         try {
-            const res = await axios.post("http://157.173.220.208/log/token/refresh/", { 'refresh': refreshToken }, { headers: { "Content-Type": "application/json" } });
+            const res = await axios.post("http://157.173.220.208/log/token/refresh/", 
+                { 'refresh': refreshToken }, 
+                { headers: { "Content-Type": "application/json" } }
+            );
             Cookies.set('refresh_token', res.data.refresh, { expires: 7 });
             return res.data.access;
         } catch (error) {
@@ -55,14 +57,12 @@ const Service = () => {
             return null;
         }
     };
-    
-    // ========== FETCH SERVICE ==========
 
     const fetchServicebyid = async (sid) => {
         const accessToken = await refresh_token();
         if (!accessToken) return;
         try {
-            const response = await axios.get("http://157.173.220.208/utils/getservicebyidbyhead/"+sid, { headers: { Authorization: `Bearer ${accessToken}` } });
+            const response = await axios.get(`http://157.173.220.208/utils/getservicebyidbyhead/${sid}`, { headers: { Authorization: `Bearer ${accessToken}` } });
             setfetchService(true);
             setfetchServiceId(response.data.id);
             setfetchServiceStaffId(response.data.staff);
@@ -74,80 +74,70 @@ const Service = () => {
             setfetchServiceFeedback(response.data.feedback);
             setfetchServiceAvailableFrom(response.data.available.from);
             setfetchServiceAvailableTo(response.data.available.to);
-
         } catch (error) {
-            console.error("Error fetching customers:", error);
+            console.error("Error fetching service:", error);
         }
     };
-
-    // ========== PATCH SERVICE ==========
 
     const patchService = async (sid) => {
         const accessToken = await refresh_token();
         if (!accessToken) return;
-        const reqBody ={
+        const reqBody = {
             "staff": fetchServiceStaffId,
             "card": fetchServiceCardId,
             "available_date": fetchServiceAvaDate,
             "complaint": fetchServiceComplaint,
             "status": fetchServiceStatus
-        }
+        };
         try {
-            const response = await axios.patch("http://157.173.220.208/utils/patchservicebyidbyhead/"+sid, reqBody, { headers: { Authorization: `Bearer ${accessToken}` } });
+            const response = await axios.patch(`http://157.173.220.208/utils/patchservicebyidbyhead/${sid}`, reqBody, { headers: { Authorization: `Bearer ${accessToken}` } });
             console.log(response.data);
             getAllServiceList();
             alert("Service updated successfully!");
         } catch (error) {
-            console.error("Error fetching customers:", error);
+            console.error("Error editing service:", error);
             alert("Error Editing Service, Please check the values and try again.");
         }
     };
 
-    // ========== CREATE SERVICE ==========
-
     const createService = async () => {
         const accessToken = await refresh_token();
         if (!accessToken) return;
-        const reqBody ={
+        const reqBody = {
             "customer": createServiceCustomerId,
             "staff": createServiceStaffId,
             "card": createServiceCardId,
             "available_date": createServiceAvaDate,
-            "available":{"from": createServiceAvaDate, "to": createServiceAvaDate},
+            "available": { "from": createServiceAvaDate, "to": createServiceAvaDate },
             "complaint": createServiceComplaint,
             "description": createServiceComplaintDescription,
             "status": "BD",
-        }
-        console.log(reqBody);
+        };
         try {
             const response = await axios.post("http://157.173.220.208/services/", reqBody, { headers: { Authorization: `Bearer ${accessToken}` } });
             console.log(response.data);
             getAllServiceList();
             alert("Service Created successfully!");
         } catch (error) {
-            console.error("Error fetching customers:", error);
+            console.error("Error creating service:", error);
             alert("Error Creating Service, Please check the values and try again.");
         }
     };
 
-    // ========== GET CUSTOMER BY PHONE ==========
-
     const getUserByPhone = async (phone) => {
         const accessToken = await refresh_token();
-        if (!accessToken) return;
+        if (!accessToken && phone.length()!==10) return;
         try {
-            const response = await axios.get("http://157.173.220.208/utils/getuserbyphone/"+phone, { headers: { Authorization: `Bearer ${accessToken}` } });
+            const response = await axios.get(`http://157.173.220.208/utils/getuserbyphone/${phone}`, { headers: { Authorization: `Bearer ${accessToken}` } });
             setCreateUser(response.data);
             setcreateServiceCustomerId(response.data.id);
             const matchedCards = AllCard.filter(card => card.customer_code.toString() === response.data.id.toString());
             setCreateCard(matchedCards.length > 0 ? matchedCards : []);
         } catch (error) {
             setCreateUser({});
-            console.error("Error fetching customers:", error);
+            console.error("Error fetching customer by phone:", error);
         }
     };
-
-    // ========== GET ALL CARD ============
 
     const getAllCard = async () => {
         const accessToken = await refresh_token();
@@ -156,11 +146,9 @@ const Service = () => {
             const response = await axios.get("http://157.173.220.208/api/headcardlist/", { headers: { Authorization: `Bearer ${accessToken}` } });
             setAllCard(response.data);
         } catch (error) {
-            console.error("Error fetching customers:", error);
+            console.error("Error fetching cards:", error);
         }
     };
-
-    // ========== GET SERVICE LIST ==========
 
     const getAllServiceList = async () => {
         const accessToken = await refresh_token();
@@ -168,81 +156,63 @@ const Service = () => {
         try {
             const response = await axios.get("http://157.173.220.208/utils/getservicebyhead/", { headers: { Authorization: `Bearer ${accessToken}` } });
             setServiceList(response.data);
-            const sPen=response.data.filter((service) => service.status === "BD" && service.staff_name === "Waiting...").length;
-            const sCom=response.data.filter((service) => service.status === "SD").length;
-            const sUp=response.data.filter((service) => service.status === "BD" && service.staff_name != "Waiting...").length;
-            const sTot=response.data.length;
-            console.log(sPen, sCom, sUp, sTot);
-            setBoxData({"upcoming": sUp, "pending": sPen, "completed": sCom, "total": sTot});
+            setFilteredList(response.data);
+            const sPen = response.data.filter(service => service.status === "BD" && service.staff_name === "Waiting...").length;
+            const sCom = response.data.filter(service => service.status === "SD").length;
+            const sUp = response.data.filter(service => service.status === "BD" && service.staff_name !== "Waiting...").length;
+            const sTot = response.data.length;
+            setBoxData({ "upcoming": sUp, "pending": sPen, "completed": sCom, "total": sTot });
         } catch (error) {
-            console.error("Error fetching customers:", error);
-        }
-    };
-    const getPendingServiceList = async () => {
-        const accessToken = await refresh_token();
-        if (!accessToken) return;
-        try {
-            const response = await axios.get("http://157.173.220.208/utils/getservicebyhead/", { headers: { Authorization: `Bearer ${accessToken}` } });
-            setServiceList(response.data.filter((service) => service.status === "BD" && service.staff_name === "Waiting..."));
-        } catch (error) {
-            console.error("Error fetching customers:", error);
-        }
-    };
-    const getCompletedServiceList = async () => {
-        const accessToken = await refresh_token();
-        if (!accessToken) return;
-        try {
-            const response = await axios.get("http://157.173.220.208/utils/getservicebyhead/", { headers: { Authorization: `Bearer ${accessToken}` } });
-            setServiceList(response.data.filter((service) => service.status === "SD"));
-        } catch (error) {
-            console.error("Error fetching customers:", error);
-        }
-    };
-    const getUpcomingServiceList = async () => {
-        const accessToken = await refresh_token();
-        if (!accessToken) return;
-        try {
-            const response = await axios.get("http://157.173.220.208/utils/getservicebyhead/", { headers: { Authorization: `Bearer ${accessToken}` } });
-            setServiceList(response.data.filter((service) => service.status === "BD" && service.staff_name != "Waiting..."));
-        } catch (error) {
-            console.error("Error fetching customers:", error);
+            console.error("Error fetching service list:", error);
         }
     };
 
-    // =========== CONFRIMATION ON EDIT ===========
+    // Additional filtered list helpers for buttons (optional)
+    const getUpcomingServiceList = () => setFilteredList(serviceList.filter(service => service.status === "BD" && service.staff_name !== "Waiting..."));
+    const getPendingServiceList = () => setFilteredList(serviceList.filter(service => service.status === "BD" && service.staff_name === "Waiting..."));
+    const getCompletedServiceList = () => setFilteredList(serviceList.filter(service => service.status === "SD"));
 
     const handleEditService = () => {
-        if (fetchService){
+        if (fetchService) {
             const confirmEdit = window.confirm("Are you sure you want to edit this service?");
             if (confirmEdit) {
                 patchService(fetchServiceId);
             } else {
                 alert("Service Edit Cancelled");
             }
-        }else{
+        } else {
             alert("Please Fetch the Service ID First");
         }
-    }
-
-    // =========== CONFRIMATION ON CREATE ===========
+    };
 
     const handleCreateService = () => {
-        const confirmEdit = window.confirm("Are you sure you want to create this service?");
-        if (confirmEdit) {
+        const confirmCreate = window.confirm("Are you sure you want to create this service?");
+        if (confirmCreate) {
             createService();
         } else {
             alert("Service Creation Cancelled");
         }
-    }
-
+    };
 
     useEffect(() => {
         getAllServiceList();
         getAllCard();
     }, []);
 
-    return(
-        <>
+    useEffect(() => {
+        const query = searchQuery.toLowerCase();
+        if (searchType === "id") {
+            setFilteredList(serviceList.filter(service => service.id.toString().includes(query)));
+        } else if (searchType === "phone") {
+            setFilteredList(serviceList.filter(service => service.customer_data.phone?.toLowerCase().includes(query)));
+        } else if (searchType === "name") {
+            setFilteredList(serviceList.filter(service => service.customer_data.name?.toLowerCase().includes(query)));
+        } else {
+            setFilteredList(serviceList);
+        }
+    }, [searchQuery, searchType, serviceList]);
+
+    return (
         <div className='service-main'>
             <div className='service-top'>
                 <div className='service-top-main'>
@@ -251,34 +221,49 @@ const Service = () => {
                             <p className='service-top-value'>{boxData.upcoming}</p>
                             <p className='service-top-title'>Upcoming Services</p>
                         </div>
-                        <MdUpcoming className="service-top-box-icon" size={50} color='#e305a0'/>
+                        <MdUpcoming className="service-top-box-icon" size={50} color='#e305a0' />
                     </button>
                     <button className='service-top-box' onClick={getPendingServiceList}>
                         <div className='service-top-box-cont'>
                             <p className='service-top-value'>{boxData.pending}</p>
                             <p className='service-top-title'>Pending Services</p>
                         </div>
-                        <TiWarning className="service-top-box-icon" size={50} color='red'/>
+                        <TiWarning className="service-top-box-icon" size={50} color='red' />
                     </button>
                     <button className='service-top-box' onClick={getCompletedServiceList}>
                         <div className='service-top-box-cont'>
                             <p className='service-top-value'>{boxData.completed}</p>
                             <p className='service-top-title'>Completed Services</p>
                         </div>
-                        <MdVerified className="service-top-box-icon" size={50} color='green'/>
+                        <MdVerified className="service-top-box-icon" size={50} color='green' />
                     </button>
                     <button className='service-top-box' onClick={getAllServiceList}>
                         <div className='service-top-box-cont'>
                             <p className='service-top-value'>{boxData.total}</p>
                             <p className='service-top-title'>Total Services</p>
                         </div>
-                        <PiStackSimpleFill className="service-top-box-icon" size={50} color='#ff7300'/>
+                        <PiStackSimpleFill className="service-top-box-icon" size={50} color='#ff7300' />
                     </button>
                 </div>
             </div>
+
             <div className='service-bottom'>
                 <div className='service-bottom-main'>
                     <div className='service-bottom-left'>
+                        <div className='service-bottom-left-top'>
+                            <select value={searchType} onChange={(e) => setSearchType(e.target.value)}>
+                                <option value="id">Search by ID</option>
+                                <option value="phone">Search by Phone</option>
+                                <option value="name">Search by Name</option>
+                            </select>
+                            <input
+                                type="text"
+                                placeholder={`Enter ${searchType}`}
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                            />
+                        </div>
+
                         <div className='service-bottom-table-cont'>
                             <table className="service-list">
                                 <thead>
@@ -291,19 +276,24 @@ const Service = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {serviceList.map((service) => (
-                                        <tr key={service.id}>
+                                    {filteredList.map((service) => (
+                                        <tr key={service.id} onClick={() => {
+                                            setfetchServiceId(service.id.toString());
+                                            fetchServicebyid(service.id);
+                                            setEditService(true);
+                                        }} style={{ cursor: 'pointer' }}>
                                             <td>{service.id}</td>
                                             <td>{service.customer_data.name}</td>
                                             <td>{service.staff_name}</td>
                                             <td>{service.complaint}</td>
-                                            <td>{service.status=="SD"?service.rating+"/5":service.status}</td>
+                                            <td>{service.status === "SD" ? `${service.rating}/5` : service.status}</td>
                                         </tr>
                                     ))}
                                 </tbody>
                             </table>
                         </div>
                     </div>
+
                     <div className='service-bottom-right'>
                         <div className='service-bottom-right-cont'>
                             <div className='service-bottom-right-top'>
@@ -440,12 +430,10 @@ const Service = () => {
                         </div>
 
                     </div>
-                    
-
                 </div>
             </div>
         </div>
-        </>
-    )
-}
+    );
+};
+
 export default Service;

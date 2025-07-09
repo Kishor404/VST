@@ -38,6 +38,14 @@ const ShowCard = () => {
         }
     };
 
+    const fetchCardDetails = async (cardId) => {
+        const accessToken = await refresh_token();
+        if (accessToken) {
+            await fetch_user(cardId, accessToken);
+        }
+    };
+
+
     const edit = async () => {
         if (cid.trim() === "") {
             alert("Enter Customer ID");
@@ -119,14 +127,14 @@ const ShowCard = () => {
                     <div className='showcard-edit-cont'>
                         <div className='showcard-edit-box'>
                             <input
-                                placeholder='Enter showcard ID'
-                                value={cid}
-                                onChange={(e) => setCid(e.target.value)}
-                                className='showcard-edit-input'
+                            placeholder='Search by Customer Name'
+                            value={cid}
+                            onChange={(e) => setCid(e.target.value)}
+                            className='showcard-edit-input'
                             />
-                            <button className='showcard-edit-button' onClick={edit}>Fetch</button>
                         </div>
                     </div>
+
                 </div>
 
                 {/* showcard LIST */}
@@ -142,16 +150,21 @@ const ShowCard = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {showcardList.map((showcard) => (
-                                <tr key={showcard.id}>
-                                    <td>{showcard.id}</td>
-                                    <td>{showcard.model}</td>
-                                    <td>{showcard.customer_code}</td>
-                                    <td>{showcard.customer_name}</td>
-                                    <td>{showcard.date_of_installation}</td>
-                                </tr>
-                            ))}
+                        {showcardList
+                            .filter((card) =>
+                            card.customer_name.toLowerCase().includes(cid.toLowerCase())
+                            )
+                            .map((showcard) => (
+                            <tr key={showcard.id} onClick={() => fetchCardDetails(showcard.id)} style={{ cursor: "pointer" }}>
+                                <td>{showcard.id}</td>
+                                <td>{showcard.model}</td>
+                                <td>{showcard.customer_code}</td>
+                                <td>{showcard.customer_name}</td>
+                                <td>{showcard.date_of_installation}</td>
+                            </tr>
+                        ))}
                         </tbody>
+
                     </table>
                 </div>
             </div>
