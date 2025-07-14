@@ -384,3 +384,11 @@ hr{
     font-size: 12pt;
     background-color: #e2e2e2;
 }
+.service-bottom-right-bottom-edit-info-input-drop{
+    background-color: rgb(230, 230, 230);
+    padding: 16px 8px;
+    border-radius: 10px;
+    width: calc(100% );
+    margin-bottom: 20px;
+    border: none;
+}

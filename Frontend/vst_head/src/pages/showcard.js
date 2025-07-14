@@ -1,10 +1,23 @@
+
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../styles/showcard.css';
 import { FaAddressCard } from "react-icons/fa";
 import axios from 'axios';
 import Cookies from 'js-cookie';
 
 const ShowCard = () => {
+    /* ------------------------------------------------------------------ */
+        /* ───────────────────────────  ROUTING  ──────────────────────────── */
+        /* ------------------------------------------------------------------ */
+        const navigate = useNavigate();
+    
+        /** Redirect unauthenticated users to /head/ immediately. */
+        useEffect(() => {
+            const isLoggedIn = Cookies.get('Login') === 'True';
+            if (!isLoggedIn) navigate('/head/');
+        }, [navigate]);
+    
     const [cid, setCid] = useState("");
     const [fetchData, setFetchData] = useState(null);
     const [showcardList, setshowcardList] = useState([]);

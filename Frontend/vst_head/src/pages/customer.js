@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
 import '../styles/customer.css';
 import { FaUsers } from "react-icons/fa";
 import axios from 'axios';
 import Cookies from 'js-cookie';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const Customer = () => {
     const [searchMode, setSearchMode] = useState("name"); // default search by name
@@ -27,6 +28,18 @@ const Customer = () => {
 
     const refreshToken = Cookies.get('refresh_token');
     const headRegion = Cookies.get('region');
+
+    /* ------------------------------------------------------------------ */
+    /* ───────────────────────────  ROUTING  ──────────────────────────── */
+    /* ------------------------------------------------------------------ */
+    const navigate = useNavigate();
+
+    /** Redirect unauthenticated users to /head/ immediately. */
+    useEffect(() => {
+        const isLoggedIn = Cookies.get('Login') === 'True';
+        if (!isLoggedIn) navigate('/head/');
+    }, [navigate]);
+
 
     const refresh_token = async () => {
         try {

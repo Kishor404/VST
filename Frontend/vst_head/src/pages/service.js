@@ -5,11 +5,23 @@ import { TiWarning } from "react-icons/ti";
 import { PiStackSimpleFill } from "react-icons/pi";
 import { MdAddToPhotos } from "react-icons/md";
 import { RiEdit2Fill } from "react-icons/ri";
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 
 const Service = () => {
+    /* ------------------------------------------------------------------ */
+        /* ───────────────────────────  ROUTING  ──────────────────────────── */
+        /* ------------------------------------------------------------------ */
+        const navigate = useNavigate();
+    
+        /** Redirect unauthenticated users to /head/ immediately. */
+        useEffect(() => {
+            const isLoggedIn = Cookies.get('Login') === 'True';
+            if (!isLoggedIn) navigate('/head/');
+        }, [navigate]);
+    
     const [serviceList, setServiceList] = useState([]);
     const [filteredList, setFilteredList] = useState([]);
     const [searchType, setSearchType] = useState("id");
@@ -347,8 +359,20 @@ const Service = () => {
                                             </div>
                                             <div className='service-bottom-right-bottom-edit-info-cont'>
                                                 <p className='service-bottom-right-bottom-edit-info-title'>Status</p>
-                                                <input type="text" placeholder='Enter Status' className='service-bottom-right-bottom-edit-info-input' value={fetchServiceStatus} onChange={(e)=>{setfetchServiceStatus(e.target.value)}}/>
+                                                <select
+                                                    className='service-bottom-right-bottom-edit-info-input-drop'
+                                                    value={fetchServiceStatus}
+                                                    onChange={(e) => setfetchServiceStatus(e.target.value)}
+                                                >
+                                                    <option value="">-- Select Status --</option>
+                                                    <option value="BD">Booked</option>
+                                                    <option value="SD">Serviced</option>
+                                                    <option value="NS">Not Serviced</option>
+                                                    <option value="CC">Service Cancelled By Customer</option>
+                                                    <option value="CW">Service Cancelled By Worker</option>
+                                                </select>
                                             </div>
+
                                             {
                                                 fetchServiceStatus === "SD" ?
                                                 (

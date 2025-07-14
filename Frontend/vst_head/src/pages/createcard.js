@@ -2,7 +2,8 @@ import '../styles/createcard.css';
 import CreateCardimg from '../assets/createcard.jpg';
 import axios from 'axios';
 import Cookies from 'js-cookie';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const CreateCard=()=>{
 
@@ -19,6 +20,18 @@ const CreateCard=()=>{
     const [acmed, setAcmed] = useState("");
     const [csd, setCsd] = useState("");
     const [ced, setCed] = useState("");
+
+     /* ------------------------------------------------------------------ */
+    /* ───────────────────────────  ROUTING  ──────────────────────────── */
+    /* ------------------------------------------------------------------ */
+    const navigate = useNavigate();
+
+    /** Redirect unauthenticated users to /head/ immediately. */
+    useEffect(() => {
+        const isLoggedIn = Cookies.get('Login') === 'True';
+        if (!isLoggedIn) navigate('/head/');
+    }, [navigate]);
+
 
 
     // Refresh Token Function

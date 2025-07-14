@@ -3,12 +3,13 @@ import { FaUsersGear } from "react-icons/fa6";
 import { TiWarning } from "react-icons/ti";
 import { FaUserCheck } from "react-icons/fa";
 import { FaUserTag } from "react-icons/fa";
-import { useState, useEffect } from 'react';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import { Link } from 'react-router-dom';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable'; // ✅ Correct import
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const Essentials = () => {
     const refreshToken = Cookies.get('refresh_token');
@@ -19,6 +20,18 @@ const Essentials = () => {
     const [ContractList, setContractList] = useState([]);
     const [cards, setCards] = useState([]);
     const [selectedMonth, setSelectedMonth] = useState("");
+
+    /* ------------------------------------------------------------------ */
+        /* ───────────────────────────  ROUTING  ──────────────────────────── */
+        /* ------------------------------------------------------------------ */
+        const navigate = useNavigate();
+    
+        /** Redirect unauthenticated users to /head/ immediately. */
+        useEffect(() => {
+            const isLoggedIn = Cookies.get('Login') === 'True';
+            if (!isLoggedIn) navigate('/head/');
+        }, [navigate]);
+    
 
     const refresh_token = async () => {
         try {
