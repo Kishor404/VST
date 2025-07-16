@@ -576,7 +576,9 @@ class _CurrentWorkState extends State<CurrentWork> {
               ? const Center(
                   child: Text("No Service Available Currently", style: TextStyle(fontSize: 20, color: Colors.grey)),
                 )
-              : _buildServiceCard(services.last),
+              : SingleChildScrollView(
+                  child: _buildServiceCard(services.last), // Wrap with scroll view
+                ),
     );
   }
 
