@@ -77,6 +77,21 @@ const CreateCard=()=>{
                 }
             });
             if (response.data) {
+
+                // ====== NOTIFY CUSTOMER =========
+                try{
+                    const notiBody = {
+                        "token":createUser.FCM_Token || "",
+                        "title": "Your Service Card Has Been Created !",
+                        "body": `Card created for `+createUser.name + " with Model: " + model+".",
+                    }
+                    const notifyUser=await axios.post("http://157.173.220.208/firebase/send-notification/", notiBody, { headers: { 'Content-Type': 'application/json' } });
+                    console.log("Notification sent:", notifyUser.data);
+                }catch (error) {
+                    console.error("Error sending notification:", error);
+                }
+                // =============================
+
                 window.alert("Card Created Successfully");
                 window.location.reload();
             }

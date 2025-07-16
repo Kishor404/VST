@@ -288,7 +288,7 @@ const Customer = () => {
                                 </>
                             ) : (
                                 <p style={{ padding: "20px" }}>Select a customer to view/edit details.</p>
-                            )}
+                            )}.
                         </div>
                         {isCreating ? (
                             <button className="customer-details-but" onClick={createCustomer}>

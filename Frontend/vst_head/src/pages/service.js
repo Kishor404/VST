@@ -30,6 +30,7 @@ const Service = () => {
     const [editService, setEditService] = useState(true);
 
     const [createUser, setCreateUser] = useState({});
+    const [createUserStaff, setCreateUserStaff] = useState({});
     const [createCard, setCreateCard] = useState([]);
     const [AllCard, setAllCard] = useState([]);
 
@@ -47,6 +48,7 @@ const Service = () => {
 
     const [createServiceCustomerId, setcreateServiceCustomerId] = useState("");
     const [createServiceCustomerIdPhone, setcreateServiceCustomerIdPhone] = useState("");
+    const [createServiceStaffIdPhone, setcreateServiceStaffIdPhone] = useState("");
     const [createServiceStaffId, setcreateServiceStaffId] = useState("");
     const [createServiceCardId, setcreateServiceCardId] = useState("");
     const [createServiceAvaDate, setcreateServiceAvaDate] = useState("");
@@ -105,6 +107,7 @@ const Service = () => {
             const response = await axios.patch(`http://157.173.220.208/utils/patchservicebyidbyhead/${sid}`, reqBody, { headers: { Authorization: `Bearer ${accessToken}` } });
             console.log(response.data);
             getAllServiceList();
+            
             alert("Service updated successfully!");
         } catch (error) {
             console.error("Error editing service:", error);
@@ -129,6 +132,31 @@ const Service = () => {
             const response = await axios.post("http://157.173.220.208/services/", reqBody, { headers: { Authorization: `Bearer ${accessToken}` } });
             console.log(response.data);
             getAllServiceList();
+            // ====== NOTIFY CUSTOMER =========
+            try{
+                const notiBody = {
+                    "token":createUser.FCM_Token || "",
+                    "title": "New Service Created",
+                    "body": `Service ID: ${response.data.id} has been created for customer ${createUser.name || "Unknown"}.`,
+                }
+                const notifyUser=await axios.post("http://157.173.220.208/firebase/send-notification/", notiBody, { headers: { 'Content-Type': 'application/json' } });
+                console.log("Notification sent:", notifyUser.data);
+            }catch (error) {
+                console.error("Error sending notification:", error);
+            }
+            // ====== NOTIFY STAFF =========
+            try{
+                const staffnotiBody = {
+                    "token":createUserStaff.FCM_Token || "",
+                    "title": "New Service Assigned",
+                    "body": `Service ID: ${response.data.id} has been assigned to you...`,
+                }
+                const staffnotifyUser=await axios.post("http://157.173.220.208/firebase/send-notification/", staffnotiBody, { headers: { 'Content-Type': 'application/json' } });
+                console.log("Notification sent:", staffnotifyUser.data);
+            }catch (error) {
+                console.error("Error sending notification:", error);
+            }
+            // ================================
             alert("Service Created successfully!");
         } catch (error) {
             console.error("Error creating service:", error);
@@ -141,12 +169,29 @@ const Service = () => {
         if (!accessToken && phone.length()!==10) return;
         try {
             const response = await axios.get(`http://157.173.220.208/utils/getuserbyphone/${phone}`, { headers: { Authorization: `Bearer ${accessToken}` } });
-            setCreateUser(response.data);
-            setcreateServiceCustomerId(response.data.id);
-            const matchedCards = AllCard.filter(card => card.customer_code.toString() === response.data.id.toString());
-            setCreateCard(matchedCards.length > 0 ? matchedCards : []);
+            if(response.data.role == "customer") {
+                setCreateUser(response.data);
+                setcreateServiceCustomerId(response.data.id);
+                const matchedCards = AllCard.filter(card => card.customer_code.toString() === response.data.id.toString());
+                setCreateCard(matchedCards.length > 0 ? matchedCards : []);
+            }
         } catch (error) {
             setCreateUser({});
+            console.error("Error fetching customer by phone:", error);
+        }
+    };
+
+    const getStaffByPhone = async (phone) => {
+        const accessToken = await refresh_token();
+        if (!accessToken && phone.length()!==10) return;
+        try {
+            const response = await axios.get(`http://157.173.220.208/utils/getuserbyphone/${phone}`, { headers: { Authorization: `Bearer ${accessToken}` } });
+            if(response.data.role == "worker") {
+                setCreateUserStaff(response.data);
+                setcreateServiceStaffId(response.data.id);
+            }
+        } catch (error) {
+            setCreateUserStaff({});
             console.error("Error fetching customer by phone:", error);
         }
     };
@@ -410,8 +455,8 @@ const Service = () => {
                                                 <input type="text" placeholder='Enter Customer Phone' className='service-bottom-right-bottom-create-info-input' required value={createServiceCustomerIdPhone} onChange={(e)=>{setcreateServiceCustomerIdPhone(e.target.value); getUserByPhone(e.target.value)}}/>
                                             </div>
                                             <div className='service-bottom-right-bottom-create-info-cont'>
-                                                <p className='service-bottom-right-bottom-create-info-title'>Staff ID</p>
-                                                <input type="text" placeholder='Enter Staff ID' className='service-bottom-right-bottom-create-info-input' required value={createServiceStaffId} onChange={(e)=>{setcreateServiceStaffId(e.target.value)}}/>
+                                                <p className='service-bottom-right-bottom-create-info-title'>Staff : {createUserStaff.name?createUserStaff.name + " ( " + createUserStaff.id + " )" : "Not Found"}</p>
+                                                <input type="text" placeholder='Enter Staff ID' className='service-bottom-right-bottom-create-info-input' required value={createServiceStaffIdPhone} onChange={(e)=>{setcreateServiceStaffIdPhone(e.target.value); getStaffByPhone(e.target.value)}}/>
                                             </div>
                                             <div className='service-bottom-right-bottom-create-info-cont-drop'>
                                                 <p className='service-bottom-right-bottom-create-info-title'>Card ID : </p>
