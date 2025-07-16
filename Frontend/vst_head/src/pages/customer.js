@@ -15,7 +15,6 @@ const Customer = () => {
     const [newCustomer, setNewCustomer] = useState({
         name: "",
         phone: "",
-        email: "",
         address: "",
         city: "",
         district: "",
@@ -135,7 +134,6 @@ const Customer = () => {
                 setNewCustomer({
                     name: "",
                     phone: "",
-                    email: "",
                     address: "",
                     city: "",
                     district: "",
@@ -281,7 +279,6 @@ const Customer = () => {
                                 <>
                                     <DetailBox label="Name" value={fetchData.name} field="name" setFetchData={setFetchData} />
                                     <DetailBox label="Phone" value={fetchData.phone} field="phone" setFetchData={setFetchData} />
-                                    <DetailBox label="Email" value={fetchData.email} field="email" setFetchData={setFetchData} />
                                     <DetailBox label="Region" value={fetchData.region} field="region" setFetchData={setFetchData} />
                                     <DetailBox label="Address" value={fetchData.address} field="address" setFetchData={setFetchData} />
                                     <DetailBox label="City" value={fetchData.city} field="city" setFetchData={setFetchData} />
