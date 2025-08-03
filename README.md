@@ -70,6 +70,13 @@ Access the backend (Django) repository here: [VST Maarketing - Backend](https://
 ## 🌐 Hosting
 All services are hosted on Hostinger VPS, with continuous deployment configured for both backend and frontend services.
 
-## 👨‍💼 Developed By
-Kishor T
-Fullstack Developer
+## 👨‍💼 Meet The Team
+### Frontend Flutter
+- RUMANA NACHIYAR M [@Rumana-Nachiyar15](https://github.com/Rumana-Nachiyar15)
+- KAMATCHI V [@??](https://github.com/Rumana-Nachiyar15)
+- KOUSALYALAKSHMI M [@??](https://github.com/Rumana-Nachiyar15)
+- THANUSHA KRISHNAKUMAR [@Thanukrish20](https://github.com/thanukrish20)
+- MUFRIN ASHIKA [@Mufrin](https://github.com/mufrin)
+### UI/UX Designer
+- SRI JANANI A
+- KAVIYA N
