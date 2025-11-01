@@ -3,6 +3,8 @@ import 'completed_works_details.dart';
 import 'package:dio/dio.dart';
 import 'data.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'login_page.dart';
+
 
 class CompletedWorks extends StatefulWidget {
   const CompletedWorks({super.key});
@@ -30,6 +32,18 @@ class _CompletedWorksState extends State<CompletedWorks> {
     await fetchUpcomingWorks();
   }
 
+  Future<void> _logout() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
+    if (mounted) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => LoginPage()), // <-- import your login page
+      );
+    }
+  }
+
+
   Future<void> _loadTokens() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
@@ -40,7 +54,7 @@ class _CompletedWorksState extends State<CompletedWorks> {
 
   Future<void> _refreshAccessToken() async {
     if (_refreshToken.isEmpty) {
-      debugPrint("No refresh token found!");
+      await _logout();
       return;
     }
 
@@ -64,18 +78,19 @@ class _CompletedWorksState extends State<CompletedWorks> {
         });
 
         debugPrint("Access token refreshed successfully.");
+      } else {
+        await _logout();
       }
     } catch (e) {
       debugPrint('Error refreshing token: $e');
+      await _logout();
     }
   }
 
+
   Future<void> fetchUpcomingWorks() async {
     if (_accessToken.isEmpty) {
-      debugPrint("No access token available. Cannot fetch services.");
-      setState(() {
-        isLoading = false;
-      });
+      await _logout();
       return;
     }
 
@@ -87,23 +102,30 @@ class _CompletedWorksState extends State<CompletedWorks> {
           'Authorization': 'Bearer $_accessToken',
         }),
       );
+
       setState(() {
         services = response.data.reversed.toList();
         isLoading = false;
       });
     } catch (e) {
       if (e is DioException && e.response?.statusCode == 401) {
-        debugPrint("Access token expired. Refreshing token...");
+        debugPrint("Access token expired. Trying refresh...");
         await _refreshAccessToken();
-        return fetchUpcomingWorks(); // Retry fetching after token refresh
+        // Retry once
+        try {
+          return await fetchUpcomingWorks();
+        } catch (_) {
+          await _logout();
+        }
+      } else {
+        setState(() {
+          isLoading = false;
+        });
+        debugPrint('Error fetching services: $e');
       }
-
-      setState(() {
-        isLoading = false;
-      });
-      debugPrint('Error fetching services: $e');
     }
   }
+
 
   @override
   Widget build(BuildContext context) {

@@ -3,6 +3,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dio/dio.dart';
 import 'data.dart';
 import 'index.dart';
+import 'login_page.dart';
+
 
 class EditUserPage extends StatefulWidget {
   @override
@@ -46,10 +48,21 @@ class _EditUserPageState extends State<EditUserPage> {
       _staffid = prefs.getString('staff_id') ?? '';
     });
   }
+  Future<void> _logout() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
+    if (mounted) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => LoginPage()),
+      );
+    }
+  }
 
   Future<void> _refreshAccessToken() async {
     if (_refreshToken.isEmpty) {
       debugPrint("No refresh token found!");
+      await _logout();
       return;
     }
 
@@ -76,8 +89,10 @@ class _EditUserPageState extends State<EditUserPage> {
       }
     } catch (e) {
       debugPrint('Error refreshing token: $e');
+      await _logout();
     }
   }
+
 
   Future<void> fetchUser() async {
     setState(() => _isLoading = true);
@@ -106,14 +121,19 @@ class _EditUserPageState extends State<EditUserPage> {
           _selectedRole = userData['role'] ?? "customer";
         });
       }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Error fetching user: $e")),
-      );
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 401) {
+        await _logout();
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Error fetching user: ${e.message}")),
+        );
+      }
     } finally {
       setState(() => _isLoading = false);
     }
   }
+
 
   Future<void> sendReq() async {
     // Show confirmation dialog before sending request

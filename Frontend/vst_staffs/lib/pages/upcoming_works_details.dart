@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'data.dart';
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'login_page.dart';
+
 
 class UpcomingServiceDetails extends StatefulWidget {
   final Map<String, dynamic> service;
@@ -34,10 +36,22 @@ class _UpcomingServiceDetailsState extends State<UpcomingServiceDetails> {
     });
   }
 
+  Future<void> _logout() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
+    if (mounted) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => LoginPage()),
+      );
+    }
+  }
+
   /// **Step 1: Refresh Access Token**
   Future<void> _refreshAccessToken() async {
     if (_refreshToken.isEmpty) {
       debugPrint("No refresh token found!");
+      await _logout();
       return;
     }
 
@@ -61,30 +75,35 @@ class _UpcomingServiceDetailsState extends State<UpcomingServiceDetails> {
         });
 
         debugPrint("Access token refreshed successfully.");
+      } else {
+        await _logout();
       }
-    } catch (e) {
-      debugPrint('Error refreshing token: $e');
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 401) {
+        await _logout();
+      } else {
+        debugPrint('Error refreshing token: $e');
+      }
     }
   }
+
 
   /// **Step 2 & 3: Send Unavailability Request**
   Future<void> _markUnavailable(BuildContext context) async {
     try {
-      await _refreshAccessToken(); // Step 1: Refresh token
+      await _refreshAccessToken();
 
-      // Step 2: Retrieve updated access token
       final accessToken = _accessToken;
-
       if (accessToken.isEmpty) {
         debugPrint("No access token found!");
+        await _logout();
         return;
       }
 
-      // Step 3: Make the POST request
       final url = '${Data.baseUrl}/unavailablereq/';
       final requestBody = {
-        'service': widget.service['id'], // Ensure 'id' exists
-        'staff': _staffid, // Ensure 'staff_id' exists
+        'service': widget.service['id'],
+        'staff': _staffid,
       };
 
       final response = await Dio().post(
@@ -105,6 +124,8 @@ class _UpcomingServiceDetailsState extends State<UpcomingServiceDetails> {
             backgroundColor: Colors.green,
           ),
         );
+      } else if (response.statusCode == 401) {
+        await _logout();
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -113,16 +134,21 @@ class _UpcomingServiceDetailsState extends State<UpcomingServiceDetails> {
           ),
         );
       }
-    } catch (e) {
-      debugPrint('Error: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("An error occurred while sending request!"),
-          backgroundColor: Colors.red,
-        ),
-      );
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 401) {
+        await _logout();
+      } else {
+        debugPrint('Error: $e');
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("An error occurred while sending request!"),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     }
   }
+
 
   @override
   Widget build(BuildContext context) {

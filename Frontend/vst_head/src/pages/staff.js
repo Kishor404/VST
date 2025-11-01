@@ -36,6 +36,9 @@ const Staff = () => {
         password: "",
         confirm_password: "",
     });
+    const [changePassword, setChangePassword]=useState(false);
+    const [changePasswordPhone, setChangePasswordPhone]=useState("");
+    const [changePasswordPassword, setChangePasswordPassword]=useState("");
 
     const refreshToken = Cookies.get('refresh_token');
     const headRegion = Cookies.get('region');
@@ -167,9 +170,82 @@ const Staff = () => {
         setFetchData(null);
     };
 
+    const OpenChangePassword=()=>{
+        setChangePassword(!changePassword);
+    }
+    const handleChangePassword = async(e) => {
+        e.preventDefault(); // prevent form reload
+        const AT = await refresh_token();
+        // simple input validation
+        if (!changePasswordPhone.trim() || !changePasswordPassword.trim()) {
+            alert("Please fill in both Phone and New Password fields.");
+            return;
+        }
+
+        // confirmation dialog
+        const confirmChange = window.confirm(
+            `Are you sure you want to change the password for phone number ${changePasswordPhone}?`
+        );
+
+        if (!confirmChange) {
+            alert("Password change cancelled.");
+            return;
+        }
+
+        const data = { phone: changePasswordPhone, new_password: changePasswordPassword };
+        console.log("Password change data:", data);
+
+        axios
+            .post("http://157.173.220.208/log/admin-change-password/", data, {
+                headers: { "Content-Type": "application/json", Authorization: `Bearer ${AT}` },
+            })
+            .then(() => {
+                alert("✅ Password changed successfully!");
+                setChangePasswordPhone("");
+                setChangePasswordPassword("");
+                setChangePassword(false);
+            })
+            .catch((error) => {
+                console.error("Error changing password:", error);
+                alert("❌ Failed to change password. Please check the phone number or try again later.");
+            });
+    };
+
+
     return (
 
             <div className="staff-cont">
+
+                {changePassword?
+                <div className='staff-change-password-dialog'>
+                    <a onClick={OpenChangePassword}></a>
+                    <form onSubmit={handleChangePassword}>
+                        <p>Change Staff Password</p>
+                        <div className='staff-change-password-inputs'>
+
+                            <input
+                                type="text"
+                                placeholder="Enter Phone Number"
+                                value={changePasswordPhone}
+                                onChange={(e) => setChangePasswordPhone(e.target.value)}
+                                required
+                            />
+                            <input
+                                type="text"
+                                placeholder="Enter New Password"
+                                value={changePasswordPassword}
+                                onChange={(e) => setChangePasswordPassword(e.target.value)}
+                                required
+                            />
+
+                        </div>
+                        
+                        <button type='submit'>Change Password</button>
+                    </form>
+                    
+                    
+                </div>
+                :<></>}
                 {/* staff LEFT */}
                 <div className="staff-left">
                     {/* Search dropdown, input, and buttons in one row */}
@@ -209,6 +285,7 @@ const Staff = () => {
                         >
                             Show All
                         </button>
+                        
                     </div>
 
                     {/* staff LIST */}
@@ -249,12 +326,17 @@ const Staff = () => {
 
                 {/* staff RIGHT */}
                 <div className="staff-right">
-                    <div className="staff-count-cont">
-                        <div className="staff-count-box">
-                            <p className="staff-count-value">{filteredList.length}</p>
-                            <p className="staff-count-title">staffs</p>
+                    <div className='staff-right-top-cont'>
+                        <button className="staff-right-top-but" onClick={OpenChangePassword}>
+                            Change Password
+                        </button>
+                        <div className="staff-count-cont">
+                            <div className="staff-count-box">
+                                <p className="staff-count-value">{filteredList.length}</p>
+                                <p className="staff-count-title">staffs</p>
+                            </div>
+                            <FaUsers className="staff-count-icon" size={50} color="green" />
                         </div>
-                        <FaUsers className="staff-count-icon" size={50} color="green" />
                     </div>
                     <div className="staff-details-cont">
                         <p className="staff-details-title">

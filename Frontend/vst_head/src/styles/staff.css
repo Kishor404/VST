@@ -281,3 +281,84 @@ body {
 .staff-search-bar select:focus{
     outline: none;
 }
+
+.staff-right-top-cont{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+}
+.staff-right-top-but{
+    background-color: white;
+    border: none;
+    padding: 15px 35px;
+    color: #3763ae;
+    border-radius: 15px;
+    cursor: pointer;
+    font-size: 12pt;
+    margin-bottom: 25px;
+    font-weight: 600;
+}
+
+.staff-change-password-dialog, .staff-change-password-dialog a{
+    position: fixed;
+    top:0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.staff-change-password-dialog a{
+    background-color: black;
+    opacity: 0.4;
+    z-index: 1;
+}
+.staff-change-password-dialog form{
+    background-color: white;
+    width: 20%;
+    border: 5px solid #4073cc;
+    border-radius: 20px;
+    z-index: 10;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+.staff-change-password-inputs{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: column;
+    height: 120px;
+    width: 70%;
+    gap:20px;
+    margin-bottom: 20px;
+}
+.staff-change-password-inputs input{
+    background-color: #e0e0e0;
+    border: none;
+    border-radius: 10px;
+    height: 100%;
+    width: calc(100% - 40px);
+    padding: 0px 20px;
+}
+.staff-change-password-dialog p{
+    color: white;
+    background-color: #3763ae;
+    width: 100%;
+    text-align: center;
+    padding: 20px 0;
+    margin: 50px 0;
+}
+.staff-change-password-dialog button{
+    background-color: #3763ae;
+    border: none;
+    padding: 15px 35px;
+    margin: 20px 0 40px 0;
+    color: white;
+    border-radius: 15px;
+    cursor: pointer;
+    font-size: 12pt;
+}

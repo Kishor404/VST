@@ -3,6 +3,8 @@ import 'upcoming_works_details.dart';
 import 'package:dio/dio.dart';
 import 'data.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'login_page.dart';
+
 
 class UpcomingWorks extends StatefulWidget {
   const UpcomingWorks({super.key});
@@ -38,9 +40,22 @@ class _UpcomingWorksState extends State<UpcomingWorks> {
     });
   }
 
+  Future<void> _logout() async {
+  final prefs = await SharedPreferences.getInstance();
+  await prefs.clear();
+  if (mounted) {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => LoginPage()),
+    );
+  }
+}
+
+
   Future<void> _refreshAccessToken() async {
     if (_refreshToken.isEmpty) {
       debugPrint("No refresh token found!");
+      await _logout();
       return;
     }
 
@@ -64,18 +79,23 @@ class _UpcomingWorksState extends State<UpcomingWorks> {
         });
 
         debugPrint("Access token refreshed successfully.");
+      } else {
+        await _logout();
       }
-    } catch (e) {
-      debugPrint('Error refreshing token: $e');
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 401) {
+        await _logout();
+      } else {
+        debugPrint('Error refreshing token: $e');
+      }
     }
   }
+
 
   Future<void> fetchUpcomingWorks() async {
     if (_accessToken.isEmpty) {
       debugPrint("No access token available. Cannot fetch services.");
-      setState(() {
-        isLoading = false;
-      });
+      await _logout();
       return;
     }
 
@@ -92,17 +112,14 @@ class _UpcomingWorksState extends State<UpcomingWorks> {
         services = response.data;
         isLoading = false;
       });
-    } catch (e) {
-      if (e is DioException && e.response?.statusCode == 401) {
-        debugPrint("Access token expired. Refreshing token...");
-        await _refreshAccessToken();
-        return fetchUpcomingWorks(); // Retry fetching after token refresh
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 401) {
+        debugPrint("Access token invalid, logging out...");
+        await _logout();
+      } else {
+        setState(() => isLoading = false);
+        debugPrint('Error fetching services: $e');
       }
-
-      setState(() {
-        isLoading = false;
-      });
-      debugPrint('Error fetching services: $e');
     }
   }
 

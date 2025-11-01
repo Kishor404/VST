@@ -3,6 +3,7 @@ import 'current_works_details.dart';
 import 'package:dio/dio.dart';
 import 'data.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'login_page.dart';
 
 class CurrentWorks extends StatefulWidget {
   const CurrentWorks({super.key});
@@ -38,9 +39,21 @@ class _CurrentWorksState extends State<CurrentWorks> {
     });
   }
 
+  Future<void> _logout() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
+    if (mounted) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => LoginPage()),
+      );
+    }
+  }
+
   Future<void> _refreshAccessToken() async {
     if (_refreshToken.isEmpty) {
       debugPrint("No refresh token found!");
+      await _logout();
       return;
     }
 
@@ -64,9 +77,12 @@ class _CurrentWorksState extends State<CurrentWorks> {
         });
 
         debugPrint("Access token refreshed successfully.");
+      } else {
+        await _logout(); // If no access token received, logout
       }
     } catch (e) {
       debugPrint('Error refreshing token: $e');
+      await _logout(); // On error, logout
     }
   }
 
@@ -76,6 +92,7 @@ class _CurrentWorksState extends State<CurrentWorks> {
       setState(() {
         isLoading = false;
       });
+      await _logout(); // Force logout if no valid access token
       return;
     }
 
@@ -96,7 +113,7 @@ class _CurrentWorksState extends State<CurrentWorks> {
       if (e is DioException && e.response?.statusCode == 401) {
         debugPrint("Access token expired. Refreshing token...");
         await _refreshAccessToken();
-        return fetchCurrentWorks(); // Retry fetching after token refresh
+        return fetchCurrentWorks(); // Retry after refresh
       }
 
       setState(() {
@@ -118,7 +135,7 @@ class _CurrentWorksState extends State<CurrentWorks> {
         centerTitle: true,
       ),
       body: isLoading
-          ? const Center(child: CircularProgressIndicator()) // Show loader while fetching data
+          ? const Center(child: CircularProgressIndicator())
           : services.isEmpty
               ? const Center(
                   child: Text(

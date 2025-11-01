@@ -3,6 +3,8 @@ import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'data.dart';
 import 'package:image_picker/image_picker.dart';
+import 'login_page.dart';
+
 
 class CurrentWork extends StatefulWidget {
   final Map<String, dynamic> service;
@@ -37,6 +39,18 @@ class _CurrentWorkState extends State<CurrentWork> {
   ]);
   }
 
+  Future<void> _logout() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
+    if (mounted) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => LoginPage()),
+      );
+    }
+  }
+
+
   Future<void> _loadTokens() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
@@ -46,7 +60,10 @@ class _CurrentWorkState extends State<CurrentWork> {
   }
 
   Future<void> _refreshAccessToken() async {
-    if (_refreshToken.isEmpty) return;
+    if (_refreshToken.isEmpty) {
+      await _logout();
+      return;
+    }
 
     final url = '${Data.baseUrl}/log/token/refresh/';
     final requestBody = {'refresh': _refreshToken};
@@ -66,11 +83,15 @@ class _CurrentWorkState extends State<CurrentWork> {
         setState(() {
           _accessToken = newAccessToken;
         });
+      } else {
+        await _logout();
       }
     } catch (e) {
       debugPrint('Error refreshing token: $e');
+      await _logout();
     }
   }
+
 
   Future<void> _checkWarrantyStatus() async {
   await _refreshAccessToken(); // ensure fresh token
